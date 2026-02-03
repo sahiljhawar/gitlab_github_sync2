@@ -17,6 +17,7 @@ jobs:
             --data '{
               "title": "${{ github.event.issue.title }}",
               "description": "${{ github.event.issue.body }}\\n\\nMirrored from GitHub #${{ github.event.issue.number }} by ${{ github.event.issue.user.login }}: ${{ github.event.issue.html_url }}",
-              "labels": ${{ format('[{0}]', join(github.event.issue.labels.*.name, '","')) }}
+              "labels":${{ format('["{0}"]', join(github.event.issue.labels.*.name, '","')) }}
+
             }' \
             "https://git.gfz.de/api/v4/projects/${{secrets.GITLAB_PID}}/issues"
