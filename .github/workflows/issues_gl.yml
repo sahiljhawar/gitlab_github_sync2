@@ -20,7 +20,7 @@ jobs:
             --argjson labels '${{ format('["{0}"]', join(github.event.issue.labels.*.name, '","')) }}' \
             '{
                 title: $title,
-                description: ($body + "\n\nMirrored from GitHub #" + $number + " by " + $user + ": " + $url),
+                description: ($body + "\n\nMirrored from GitHub " + " by " + $user + ": " + $url),
                 labels: $labels
             }' | \
             curl -X POST \
