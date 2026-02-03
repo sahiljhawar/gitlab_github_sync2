@@ -11,13 +11,20 @@ jobs:
     steps:
       - name: Mirror Issue
         run: |
-          curl --request POST \
-            --header "PRIVATE-TOKEN: ${{ secrets.BOT }}" \
-            --header "Content-Type: application/json" \
-            --data '{
-              "title": "${{ github.event.issue.title }}",
-              "description": "${{ github.event.issue.body }}\\n\\nMirrored from GitHub #${{ github.event.issue.number }} by ${{ github.event.issue.user.login }}: ${{ github.event.issue.html_url }}",
-              "labels":${{ format('["{0}"]', join(github.event.issue.labels.*.name, '","')) }}
-
-            }' \
-            "https://git.gfz.de/api/v4/projects/${{secrets.GITLAB_PID}}/issues"
+            jq -n \
+            --arg title "${{ github.event.issue.title }}" \
+            --arg body "${{ github.event.issue.body }}" \
+            --arg number "${{ github.event.issue.number }}" \
+            --arg user "${{ github.event.issue.user.login }}" \
+            --arg url "${{ github.event.issue.html_url }}" \
+            --argjson labels '${{ format('["{0}"]', join(github.event.issue.labels.*.name, '","')) }}' \
+            '{
+                title: $title,
+                description: ($body + "\n\nMirrored from GitHub #" + $number + " by " + $user + ": " + $url),
+                labels: $labels
+            }' | \
+            curl -X POST \
+            -H "PRIVATE-TOKEN: ${{ secrets.BOT }}" \
+            -H "Content-Type: application/json" \
+            --data @- \
+            "https://git.gfz.de/api/v4/projects/${{ secrets.GITLAB_PID }}/issues"
