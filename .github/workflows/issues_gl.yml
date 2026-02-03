@@ -1,0 +1,21 @@
+name: Issue Mirror to GitLab
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  mirror-to-gitlab:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror Issue
+        run: |
+          curl --request POST \
+            --header "PRIVATE-TOKEN: ${{ secrets.TARGET_TOKEN }}" \
+            --header "Content-Type: application/json" \
+            --data '{
+              "title": "${{ github.event.issue.title }}",
+              "description": "${{ github.event.issue.body }}\\n\\nMirrored from GitHub #${{ github.event.issue.number }} by ${{ github.event.issue.user.login }}: ${{ github.event.issue.html_url }}",
+              "labels": [${{ join(github.event.issue.labels.*.name, ',') }}]
+            }' \
+            "https://gitlab.com/api/v4/projects/YOUR_GITLAB_PROJECT_ID/issues"
