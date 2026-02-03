@@ -3,6 +3,7 @@ name: Issue Mirror to GitLab
 on:
   issues:
     types: [opened]
+  workflow_dispatch: 
 
 jobs:
   mirror-to-gitlab:
@@ -18,4 +19,4 @@ jobs:
               "description": "${{ github.event.issue.body }}\\n\\nMirrored from GitHub #${{ github.event.issue.number }} by ${{ github.event.issue.user.login }}: ${{ github.event.issue.html_url }}",
               "labels": [${{ join(github.event.issue.labels.*.name, ',') }}]
             }' \
-            "https://gitlab.com/api/v4/projects/YOUR_GITLAB_PROJECT_ID/issues"
+            "https://gitlab.com/api/v4/projects/${{secrets.GITLAB_PID}}/issues"
