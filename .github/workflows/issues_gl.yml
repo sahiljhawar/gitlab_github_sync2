@@ -12,7 +12,7 @@ jobs:
       - name: Mirror Issue
         run: |
           curl --request POST \
-            --header "PRIVATE-TOKEN: ${{ secrets.GL_ISSUE_TOKEN }}" \
+            --header "PRIVATE-TOKEN: ${{ secrets.BOT }}" \
             --header "Content-Type: application/json" \
             --data '{
               "title": "${{ github.event.issue.title }}",
